@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  user_id   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName String
+  lastName  String
+  year      Int?
+  email     String   @unique
+  token     String?
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+  activate  Boolean  @db.Boolean @default(false)
+  Todos     Todo[]
+}
+
+model Todo {
+  todo_id     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  user_id     String   @db.Uuid
+  users       User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade)
+  Images      Image[]
+}
+
+model Image {
+  image_id  Int      @default(autoincrement()) @id
+  image_url String
+  createAt  DateTime @default(now())
+  todo_id   String   @db.Uuid
+  todos     Todo     @relation(fields: [todo_id], references: [todo_id], onUpdate: Cascade, onDelete: Cascade)
+}

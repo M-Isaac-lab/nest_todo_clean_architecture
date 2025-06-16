@@ -21,6 +21,7 @@ model User {
   lastName  String
   year      Int?
   email     String   @unique
+  password  String
   token     String?
   createdAt DateTime @default(now())
   updateAt  DateTime @default(now())

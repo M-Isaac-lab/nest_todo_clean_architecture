@@ -19,8 +19,8 @@ export class AuthCaseRepository implements AuthRepository {
 
   async login(email: string, password: string): Promise<User | null> {
     const user = await this.prismaService.user.findUnique({where: {email}});
-    const key_hash = this.configService.get("ENCRYPT_PASSWORD");
-    const hash = await bcrypt.compare(password, key_hash);
+    if (!user) throw new NotFoundException('Email or password is incorrect');
+    const hash = await bcrypt.compare(password, user.password);
     if (!hash) {
       throw new NotFoundException('Email or password is incorrect');
     }
@@ -30,6 +30,9 @@ export class AuthCaseRepository implements AuthRepository {
   async register(User : CreateUserDto): Promise<void> {
     const user = await this.prismaService.user.findUnique({where: {email: User.email}});
     if (user) throw  new UnauthorizedException("Email already exists")
+    const secret_hash = this.configService.get("ENCRYPT_PASSWORD");
+    const hash_password = await bcrypt.hash(User.password, secret_hash)
+    await this.prismaService.user.create({data:{...User, password : hash_password}})
     const secret = this.configService.get("OTP_ENC");
     var otp = speakeasy.totp({
       secret: secret,

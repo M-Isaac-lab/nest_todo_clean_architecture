@@ -6,6 +6,7 @@ export class CreateImageDto {
   image_url: string;
   @IsUUID()
   todo_id: string;
+  file : any
 }
 
 class ImageId {

@@ -1,4 +1,9 @@
 import { Module } from '@nestjs/common';
+import { UserFactoryService } from './user-factory.service';
 
-@Module({})
-export class UserUseCasesModule {}
+@Module({
+  providers: [UserUseCasesModule],
+  exports: [UserFactoryService],
+})
+export class UserUseCasesModule {
+}

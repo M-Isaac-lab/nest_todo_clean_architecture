@@ -13,13 +13,7 @@ export class UserCaseRepository implements UserRepository {
       where: { user_id: id },
     });
     if (!user) return null;
-    return {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      year: user.year,
-      email: user.email,
-      token: user.token || '',
-    };
+    return user;
   }
 
   async create(user: CreateUserDto): Promise<void> {
@@ -47,12 +41,6 @@ export class UserCaseRepository implements UserRepository {
 
   async findAll(): Promise<User[]> {
     const users = await this.prismaService.user.findMany();
-    return users.map(user => ({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      year: user.year,
-      email: user.email,
-      token: user.token || '',
-    }));
+    return users
   }
 }

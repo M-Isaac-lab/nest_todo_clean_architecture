@@ -1,7 +1,7 @@
 import { AuthRepository } from '../../../core/repositories/auth-repository';
 import { PrismaService } from '../../../frameworks/data-services/prisma/prisma.service';
 import { User } from '../../../core/entities';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '../../../core/dtos';
 import * as bcrypt from 'bcrypt';
 import * as speakeasy from "speakeasy";
@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { MailerService } from '../../../frameworks/mailer/mailer.service';
 import { JwtService } from '@nestjs/jwt';
 
+@Injectable()
 export class AuthCaseRepository implements AuthRepository {
   constructor(
     private readonly prismaService: PrismaService,
@@ -52,10 +53,7 @@ export class AuthCaseRepository implements AuthRepository {
       token: otp,
       window: 1  // autorise une marge d’erreur temporelle
     });
-
-    if (!otpValidates) {
-      throw new UnauthorizedException("Invalid OTP");
-    }
+    if (!otpValidates) {throw new UnauthorizedException("Invalid OTP");}
     const payload = { sub: user.user_id, email: user.email };
     const access_token = this.jwtService.sign(payload, {expiresIn : '2h', secret : this.configService.get("SECRET_KEY")})
     await this.prismaService.user.update({where : {user_id : id}, data : {token : access_token, activate : true}})

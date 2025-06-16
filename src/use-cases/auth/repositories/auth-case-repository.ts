@@ -46,12 +46,13 @@ export class AuthCaseRepository implements AuthRepository {
     const user = await this.prismaService.user.findUnique({where: {user_id: id}});
     if (!user) throw new NotFoundException("User not found");
     const secret = this.configService.get("OTP_ENC");
-    var otpValidates = speakeasy.hotp.verify({
+    const otpValidates = speakeasy.totp.verify({
       secret: secret,
       encoding: 'base32',
       token: otp,
-      counter: 123
+      window: 1  // autorise une marge d’erreur temporelle
     });
+
     if (!otpValidates) {
       throw new UnauthorizedException("Invalid OTP");
     }

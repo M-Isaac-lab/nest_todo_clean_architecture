@@ -1,10 +1,12 @@
 // todo.controller.ts
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateTodoDto, UpdateTodoDto } from '../../core/dtos';
 import { TodoCaseService } from '../../use-cases/todo/todo-case.service';
+import { JwtAuthGuard } from '../../frameworks/auth-services/JwtAuthGuard';
 
 @ApiTags('api/todo')
+@UseGuards(JwtAuthGuard)
 @Controller('api/todo')
 export class TodoController {
   constructor(private readonly todoService: TodoCaseService) {}

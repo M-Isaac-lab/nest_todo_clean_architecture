@@ -1,20 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../frameworks/data-services/prisma/prisma.service';
-import { TodoRepository } from '../../../core/repositories';
+import { ImageRepository, TodoRepository } from '../../../core/repositories';
 import { CreateTodoDto, UpdateTodoDto } from 'src/core/dtos';
 import { Todo } from 'src/core/entities';
 
 @Injectable()
 export class TodoCaseRepository implements TodoRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService,
+              private readonly imageCaseRepository : ImageRepository,) {}
 
   async findOne(id: string): Promise<Todo | null> {
-    return this.prismaService.todo.findUnique({where : {todo_id : id}})
-
+    return this.prismaService.todo.findUnique({where : {todo_id : id}, include : {Images  : true}})
   }
 
   async create(todo: CreateTodoDto): Promise<void> {
-     await this.prismaService.todo.create({data : {...todo}})
+     const todocreate = await this.prismaService.todo.create({data : {...todo}})
+    if(todo.files){
+      const image = await this.imageCaseRepository.uploadFile(todo.files)
+      if(!image) throw new Error("Error uploading file")
+      const payload_bucket = {
+        image_url: image.fullPath,
+        todo_id: todocreate.todo_id,
+      }
+      await this.imageCaseRepository.create(payload_bucket)
+    }
+
   }
 
   async update(id: string, todo: UpdateTodoDto): Promise<void> {
@@ -26,6 +36,6 @@ export class TodoCaseRepository implements TodoRepository {
   }
 
   async findAll(): Promise<Todo[]> {
-    return await this.prismaService.todo.findMany();
+    return await this.prismaService.todo.findMany({include : {Images : true}});
   }
 }

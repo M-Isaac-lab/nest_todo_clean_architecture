@@ -1,3 +1,4 @@
+import { Image } from './image.entity';
 
 
 export class Todo {
@@ -6,4 +7,5 @@ export class Todo {
   createdAt: Date;
   updatedAt: Date;
   user_id: string;
+  Images : Image[];
 }

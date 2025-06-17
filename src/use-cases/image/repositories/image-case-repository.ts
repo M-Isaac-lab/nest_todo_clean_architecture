@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ImageRepository } from '../../../core/repositories';
 import { PrismaService } from '../../../frameworks/data-services/prisma/prisma.service';
 import { CreateImageDto } from 'src/core/dtos';
-import { Image } from 'src/core/entities';
+import { BucketEntity, Image } from 'src/core/entities';
 import { supabase, supabasebucket } from '../../../frameworks/supabase/supabase.const';
 
 
@@ -10,33 +10,60 @@ import { supabase, supabasebucket } from '../../../frameworks/supabase/supabase.
 export class ImageCaseRepository implements ImageRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async uploadFile(file) {
-    const { data, error } = await supabase.storage.from(supabasebucket).upload('file_path', file)
+  async findByTodo(id: string): Promise<Image[]> {
+    return await this.prismaService.image.findMany({
+      where: { todo_id: id },
+    });
+  }
+
+  async uploadFile(file) : Promise<BucketEntity | null> {
+    const { data, error } = await supabase.storage
+      .from(supabasebucket)
+      .upload('file_path', file);
     if (error) {
-      throw new Error(error.message)
+      throw new Error(error.message);
       // Handle error
     } else {
-      return data
+      return data;
       // Handle success
     }
   }
 
-  async findOne(id: string): Promise<Image | null> {
-    throw new Error('Method not implemented.');
+  async downloadFile(path: string) {
+    // Use the JS library to download a file.
+    const { data, error } = await supabase.storage.from(supabasebucket).download(path)
+    if (error) {
+      throw new Error(error.message)
+    } else {
+      return data
+    }
+  }
+
+  async deleteFile(path: string) {
+    await supabase.storage.from(supabasebucket).remove([path]);
+  }
+
+  async findOne(id: number): Promise<Image | null> {
+    return await this.prismaService.image.findUnique({where : {image_id : id}})
   }
 
   async create(image: CreateImageDto): Promise<Image | null> {
-    const image_url = await this.uploadFile(image.file)
-    return await this.prismaService.image.create({data : {...image, image_url : image_url?.fullPath}})
-
+    return await this.prismaService.image.create({
+      data: { ...image },
+    });
   }
 
-  async delete(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(ids: number[]): Promise<void> {
+    for (const id of ids) {
+      const image = await this.prismaService.image.findUnique({
+        where: { image_id: id },
+      });
+      if (!image) throw new Error('Image not found');
+      await this.deleteFile(image.image_url);
+    }
   }
 
   async findAll(): Promise<Image[]> {
-    throw new Error('Method not implemented.');
+    return await this.prismaService.image.findMany();
   }
-
 }

@@ -1,12 +1,12 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsArray, IsOptional, IsString, IsUUID } from 'class-validator';
 import { IntersectionType, PartialType } from '@nestjs/mapped-types';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateImageDto {
   @IsString()
   image_url: string;
   @IsUUID()
   todo_id: string;
-  file : any
 }
 
 class ImageId {

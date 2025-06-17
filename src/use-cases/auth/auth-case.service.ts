@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { AuthCaseRepository } from './repositories/auth-case-repository';
 import { AuthRepository } from '../../core/repositories/auth-repository';
 import { CreateUserDto } from 'src/core/dtos';
 import { User } from 'src/core/entities';
 
 @Injectable()
 export class AuthCaseService implements AuthRepository {
-  constructor(private readonly authCaseRepository: AuthCaseRepository) {}
+  constructor(private readonly authCaseRepository: AuthRepository) {}
 
   async login(email: string, password: string): Promise<User | null> {
     return await this.authCaseRepository.login(email, password);

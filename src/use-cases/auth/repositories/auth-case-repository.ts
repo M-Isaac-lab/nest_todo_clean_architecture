@@ -10,7 +10,7 @@ import { MailerService } from '../../../frameworks/mailer/mailer.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class AuthCaseRepository implements AuthRepository {
+export class AuthCaseRyepository implements AuthRepository {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,

@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { TodoCaseRepository } from './repositories/todo-case-repository';
 import { TodoRepository } from '../../core/repositories';
 import { CreateTodoDto, UpdateTodoDto } from 'src/core/dtos';
 import { Todo } from 'src/core/entities';
 
 @Injectable()
 export class TodoCaseService implements TodoRepository {
-  constructor(private readonly todoCaseRepository: TodoCaseRepository) {}
+  constructor(private readonly todoCaseRepository: TodoRepository) {}
 
   async findOne(id: string): Promise<Todo | null> {
     return await this.todoCaseRepository.findOne(id)

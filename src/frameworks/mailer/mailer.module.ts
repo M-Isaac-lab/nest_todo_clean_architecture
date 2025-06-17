@@ -3,7 +3,9 @@ import { MailerService } from './mailer.service';
 
 @Global()
 @Module({
-  providers : [MailerModule],
+  providers : [
+    MailerModule,
+  ],
   exports: [MailerService]
 })
 export class MailerModule {}

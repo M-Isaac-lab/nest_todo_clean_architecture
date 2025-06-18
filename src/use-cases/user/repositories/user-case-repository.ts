@@ -13,6 +13,7 @@ export class UserCaseRepository implements UserRepository {
       where: { user_id: id },
     });
     if (!user) return null;
+    Reflect.deleteProperty(user, 'password')
     return user;
   }
 
@@ -41,6 +42,7 @@ export class UserCaseRepository implements UserRepository {
 
   async findAll(): Promise<User[]> {
     const users = await this.prismaService.user.findMany();
+    Reflect.deleteProperty(users, 'password')
     return users
   }
 }

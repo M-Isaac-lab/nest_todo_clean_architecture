@@ -8,16 +8,17 @@ import {
   Param,
   Body,
   HttpStatus,
-  HttpCode
+  HttpCode,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../../frameworks/auth-services/JwtAuthGuard';
 import { UserRepository } from '../../core/repositories';
 import { CreateUserDto, UpdateUserDto } from 'src/core/dtos';
 import { User } from 'src/core/entities';
 import { UserFactoryService } from '../../use-cases/user/user-factory.service';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../frameworks/auth-services/JwtAuthGuard';
 
 @ApiTags('Users')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('api/user')
 export class UserController implements UserRepository {

@@ -29,9 +29,6 @@ export class CreateUserDto {
   @IsString()
   password: string;
 
-  @IsOptional()
-  @IsString()
-  token?: string;
 }
 
 class UserId {

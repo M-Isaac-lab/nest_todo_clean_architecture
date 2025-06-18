@@ -14,6 +14,7 @@ import { PrismaService } from '../../frameworks/data-services/prisma/prisma.serv
     }
   ],
   controllers: [UserController],
+  exports: [UserFactoryService],
 })
 export class UserUseCasesModule {
 }

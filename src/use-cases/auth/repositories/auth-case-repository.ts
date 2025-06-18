@@ -31,16 +31,18 @@ export class AuthCaseRyepository implements AuthRepository {
   async register(User : CreateUserDto): Promise<void> {
     const user = await this.prismaService.user.findUnique({where: {email: User.email}});
     if (user) throw  new UnauthorizedException("Email already exists")
-    const secret_hash = this.configService.get("ENCRYPT_PASSWORD");
+    const secret_hash = Number(this.configService.get("ENCRYPT_PASSWORD"));
     const hash_password = await bcrypt.hash(User.password, secret_hash)
     await this.prismaService.user.create({data:{...User, password : hash_password}})
     const secret = this.configService.get("OTP_ENC");
     var otp = speakeasy.totp({
       secret: secret,
       encoding: 'base32',
-      time: 600
+      digits: 6,
+      step: 10 * 60
     });
-    await this.nodemailerService.sendSignupConfirmation(User.email, otp);
+    console.log(otp)
+    //await this.nodemailerService.sendSignupConfirmation(User.email, otp);
   }
 
   async verifyauth(otp: string, id: string): Promise<User | null> {
@@ -50,14 +52,16 @@ export class AuthCaseRyepository implements AuthRepository {
     const otpValidates = speakeasy.totp.verify({
       secret: secret,
       encoding: 'base32',
+      digits: 6,
+      step: 10 * 60,
       token: otp,
-      window: 1  // autorise une marge d’erreur temporelle
     });
     if (!otpValidates) {throw new UnauthorizedException("Invalid OTP");}
     const payload = { sub: user.user_id, email: user.email };
-    const access_token = this.jwtService.sign(payload, {expiresIn : '2h', secret : this.configService.get("SECRET_KEY")})
-    await this.prismaService.user.update({where : {user_id : id}, data : {token : access_token, activate : true}})
-    return user;
+    const access_token = this.jwtService.sign(payload, {expiresIn : '2h', secret : this.configService.get("JWT_SECRET")})
+    const user_verify_success = await this.prismaService.user.update({where : {user_id : id}, data : {token : access_token, activate : true}})
+    Reflect.deleteProperty(user_verify_success, 'password')
+    return user_verify_success
   }
 
 }

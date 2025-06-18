@@ -5,18 +5,20 @@ import { AuthRepository } from '../../core/repositories/auth-repository';
 import { AuthCaseRyepository } from './repositories/auth-case-repository';
 import { PrismaService } from '../../frameworks/data-services/prisma/prisma.service';
 import { MailerService } from '../../frameworks/mailer/mailer.service';
-import { JwtService } from '@nestjs/jwt';
+import { JwtStrategy } from '../../frameworks/auth-services/JwtAuthStrategy';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   providers: [AuthCaseService,
     PrismaService,
     MailerService,
-    JwtService,
+    JwtStrategy,
     {
       provide: AuthRepository,
       useClass: AuthCaseRyepository
     }
   ],
+  imports: [JwtModule.register({})],
   controllers : [AuthController],
   exports: [AuthCaseService],
 })

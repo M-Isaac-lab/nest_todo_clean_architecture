@@ -2,7 +2,9 @@ import { Image } from '../../entities';
 import { ResponseDto } from './response.dto';
 
 export class CreateImageReponseDto extends ResponseDto{
-  Image: Image;
+  image_url: string;
+  createAt: Date;
+  todo_id: string;
 }
 
-export class UpdateImageReponseDto extends CreateImageReponseDto {}
+export class UpdateImageResponseDto extends CreateImageReponseDto {}

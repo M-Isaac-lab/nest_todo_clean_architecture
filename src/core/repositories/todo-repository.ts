@@ -1,6 +1,6 @@
-import { Todo } from '../entities';
 import { CreateTodoDto } from '../dtos';
 import { UpdateTodoDto } from '../dtos';
+import { Todo } from '../entities';
 
 export abstract class TodoRepository {
   abstract findOne(id: string): Promise<Todo | null>;

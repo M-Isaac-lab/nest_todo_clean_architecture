@@ -1,5 +1,5 @@
-import { User } from '../entities';
 import { CreateUserDto } from '../dtos';
+import { User } from '../entities';
 
 export abstract class AuthRepository {
   abstract login(email: string, password: string): Promise<User | null>;

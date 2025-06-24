@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../frameworks/data-services/prisma/prisma.service';
 import { ImageRepository, TodoRepository } from '../../../core/repositories';
-import { CreateTodoDto, CreateTodoResponseDto, UpdateTodoDto } from 'src/core/dtos';
+import { CreateTodoDto, TodoResponseDto, UpdateTodoDto } from 'src/core/dtos';
 import { Todo } from '../../../core/entities';
 
 @Injectable()
@@ -10,8 +10,8 @@ export class TodoCaseRepository implements TodoRepository {
               private readonly imageCaseRepository : ImageRepository,) {}
 
   async findOne(id: string): Promise<Todo | null> {
-    return await this.prismaService.todo.findUnique({where : {todo_id : id}, include : {Images  : true}})
-
+    const todo = await this.prismaService.todo.findUnique({where : {todo_id : id}, select : TodoResponseDto})
+    return todo
   }
 
   async create(todo: CreateTodoDto): Promise<void> {
@@ -37,7 +37,7 @@ export class TodoCaseRepository implements TodoRepository {
   }
 
   async findAll(): Promise<Todo[]> {
-    return await this.prismaService.todo.findMany({ include: { Images: true } });
+    return await this.prismaService.todo.findMany({ select : TodoResponseDto});
   }
 
 }

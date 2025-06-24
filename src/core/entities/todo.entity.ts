@@ -2,6 +2,7 @@ import { Image } from './image.entity';
 
 
 export class Todo {
+  todo_id  : string;
   title: string;
   description: string;
   createdAt: Date;

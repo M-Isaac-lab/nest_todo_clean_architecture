@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../../../core/repositories';
-import { CreateUserDto, UpdateUserDto } from 'src/core/dtos';
+import { CreateUserDto, UpdateUserDto, UserReponseDto } from 'src/core/dtos';
 import { User } from 'src/core/entities';
 import { PrismaService } from '../../../frameworks/data-services/prisma/prisma.service';
 
@@ -11,9 +11,9 @@ export class UserCaseRepository implements UserRepository {
   async findOne(id: string): Promise<User | null> {
     const user = await this.prismaService.user.findUnique({
       where: { user_id: id },
+      select: UserReponseDto,
     });
     if (!user) return null;
-    Reflect.deleteProperty(user, 'password')
     return user;
   }
 
@@ -41,8 +41,7 @@ export class UserCaseRepository implements UserRepository {
   }
 
   async findAll(): Promise<User[]> {
-    const users = await this.prismaService.user.findMany();
-    Reflect.deleteProperty(users, 'password')
+    const users = await this.prismaService.user.findMany({select : UserReponseDto});
     return users
   }
 }

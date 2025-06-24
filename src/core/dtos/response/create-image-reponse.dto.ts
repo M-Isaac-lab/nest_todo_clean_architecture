@@ -1,10 +1,7 @@
-import { Image } from '../../entities';
-import { ResponseDto } from './response.dto';
-
-export class CreateImageReponseDto extends ResponseDto{
-  image_url: string;
-  createAt: Date;
-  todo_id: string;
+export const ImageReponseDto = {
+  image_url: true,
+  createAt: true,
+  todo_id: true,
+  image_id : true,
 }
 
-export class UpdateImageResponseDto extends CreateImageReponseDto {}

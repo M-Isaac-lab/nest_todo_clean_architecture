@@ -1,4 +1,4 @@
-export class ResponseDto {
+class ResponseDto {
   success: boolean;
   message: string;
 }

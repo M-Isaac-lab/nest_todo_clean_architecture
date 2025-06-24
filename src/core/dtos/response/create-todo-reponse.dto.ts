@@ -1,13 +1,9 @@
-import { ResponseDto } from './response.dto';
-import { CreateImageReponseDto } from './create-image-reponse.dto';
-
-export class CreateTodoResponseDto extends ResponseDto {
-  title: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  user_id: string;
-  Images : CreateImageReponseDto[];
+export const TodoResponseDto = {
+  todo_id: true,
+  title: true,
+  description: true,
+  createdAt: true,
+  updatedAt: true,
+  user_id: true,
+  Images : true,
 }
-
-export class UpdateTodoResponseDto extends CreateTodoResponseDto {}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ImageRepository } from '../../../core/repositories';
 import { PrismaService } from '../../../frameworks/data-services/prisma/prisma.service';
-import { CreateImageDto } from 'src/core/dtos';
+import { CreateImageDto, ImageReponseDto } from 'src/core/dtos';
 import { BucketEntity, Image } from 'src/core/entities';
 import { supabase, supabasebucket } from '../../../frameworks/supabase/supabase.const';
 
@@ -13,6 +13,7 @@ export class ImageCaseRepository implements ImageRepository {
   async findByTodo(id: string): Promise<Image[]> {
     return await this.prismaService.image.findMany({
       where: { todo_id: id },
+      select : ImageReponseDto
     });
   }
 
@@ -44,12 +45,13 @@ export class ImageCaseRepository implements ImageRepository {
   }
 
   async findOne(id: number): Promise<Image | null> {
-    return await this.prismaService.image.findUnique({where : {image_id : id}})
+    return await this.prismaService.image.findUnique({where : {image_id : id}, select : ImageReponseDto})
   }
 
   async create(image: CreateImageDto): Promise<Image | null> {
     return await this.prismaService.image.create({
       data: { ...image },
+      select : ImageReponseDto
     });
   }
 
@@ -64,6 +66,6 @@ export class ImageCaseRepository implements ImageRepository {
   }
 
   async findAll(): Promise<Image[]> {
-    return await this.prismaService.image.findMany();
+    return await this.prismaService.image.findMany({select : ImageReponseDto});
   }
 }

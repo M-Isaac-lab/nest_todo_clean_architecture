@@ -5,7 +5,7 @@ import { CreateTodoDto, UpdateTodoDto } from '../../core/dtos';
 import { TodoCaseService } from '../../use-cases/todo/todo-case.service';
 import { JwtAuthGuard } from '../../frameworks/auth-services/JwtAuthGuard';
 import { TodoRepository } from '../../core/repositories';
-import { Todo } from '../../core/entities';
+import { Todo, User } from '../../core/entities';
 
 @ApiTags('Todo')
 @ApiBearerAuth()
@@ -23,15 +23,15 @@ export class TodoController implements TodoRepository{
 
   @Get('')
   @ApiOperation({ summary: 'Récupérer tous les todos' })
-  @ApiResponse({ status: 200, description: 'Liste des todos récupérée avec succès.' })
+  @ApiResponse({ status: 200, description: 'Liste des todos récupérée avec succès.' ,type: [Todo]})
   async findAll(): Promise<Todo[]> {
     return await this.todoService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer un todo par son ID' })
-  @ApiResponse({ status: 200, description: 'Todo trouvé.' })
-  @ApiResponse({ status: 404, description: 'Todo non trouvé.' })
+  @ApiResponse({ status: 200, description: 'Todo trouvé.' , type: Todo })
+  @ApiResponse({ status: 404, description: 'Todo non trouvé.'})
   async findOne(@Param('id') id: string): Promise<Todo | null> {
     return await this.todoService.findOne(id);
   }

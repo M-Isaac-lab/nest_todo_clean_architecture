@@ -2,7 +2,7 @@ import { User } from '../../entities';
 import { ResponseDto } from './response.dto';
 
 export class CreateUserResponseDto extends ResponseDto{
-  user: User;
+  User: User;
 }
 
 export class UpdateUserResponseDto extends CreateUserResponseDto {}

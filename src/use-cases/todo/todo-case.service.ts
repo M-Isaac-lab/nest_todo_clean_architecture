@@ -11,8 +11,8 @@ export class TodoCaseService implements TodoRepository {
     return await this.todoCaseRepository.findOne(id)
   }
 
-  async create(todo: CreateTodoDto): Promise<void> {
-    return await this.todoCaseRepository.create(todo)
+  async create(todo: CreateTodoDto, files?: Express.Multer.File[]): Promise<void> {
+    return await this.todoCaseRepository.create(todo, files)
   }
 
   async update(id: string, todo: UpdateTodoDto): Promise<void> {

@@ -7,5 +7,5 @@ export abstract class ImageRepository {
   abstract delete(id: number[]): Promise<void>;
   abstract findAll(): Promise<Image[]>;
   abstract findByTodo(id: string): Promise<Image[]>;
-  abstract uploadFile(file : Express.Multer.File[]): Promise< BucketEntity | null>;
+  abstract uploadFiles(files : Express.Multer.File[],  user_id : string, todo_id : string): Promise< BucketEntity[] | null>;
 }

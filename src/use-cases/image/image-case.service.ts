@@ -7,8 +7,8 @@ import { BucketEntity, Image } from 'src/core/entities';
 export class ImageCaseService implements ImageRepository {
   constructor(private readonly imageCaseRepository: ImageRepository) {}
 
-  async uploadFile(file: Express.Multer.File[]): Promise<BucketEntity | null> {
-    return await this.imageCaseRepository.uploadFile(file);
+  async uploadFiles(file: Express.Multer.File[],  user_id : string, todo_id : string): Promise<BucketEntity[] | null> {
+    return await this.imageCaseRepository.uploadFiles(file, user_id, todo_id);
   }
 
   async findOne(id: number): Promise<Image | null> {

@@ -4,6 +4,7 @@ import { PrismaService } from '../../../frameworks/data-services/prisma/prisma.s
 import { CreateImageDto, ImageReponseDto } from 'src/core/dtos';
 import { BucketEntity, Image } from 'src/core/entities';
 import { supabase, supabasebucket } from '../../../frameworks/supabase/supabase.const';
+import { sanitizeFileName } from '../../../core/utils/sanitizeFileName';
 
 
 @Injectable()
@@ -17,18 +18,29 @@ export class ImageCaseRepository implements ImageRepository {
     });
   }
 
-  async uploadFile(file) : Promise<BucketEntity | null> {
-    const { data, error } = await supabase.storage
-      .from(supabasebucket)
-      .upload('file_path', file);
-    if (error) {
-      throw new Error(error.message);
-      // Handle error
-    } else {
-      return data;
-      // Handle success
+  async uploadFiles(files: Express.Multer.File[],  user_id : string, todo_id : string): Promise<BucketEntity[] | null> {
+    const results: BucketEntity[] = [];
+
+    for (const file of files) {
+      if (file?.buffer && file?.originalname && file?.mimetype) {
+        const safeName = sanitizeFileName(file.originalname);
+        const { data, error } = await supabase.storage
+          .from(supabasebucket)
+          .upload(`uploads/${user_id}/${todo_id}/${safeName}`, file.buffer, {
+            contentType: file.mimetype,
+            upsert: true,
+          });
+
+        if (error) throw new Error("error her "+error.message);
+        if (data) results.push(data);
+      } else {
+        throw new Error("❌ Un fichier est invalide ou mal formaté.");
+      }
     }
+
+    return results;
   }
+
 
   async downloadFile(path: string) {
     // Use the JS library to download a file.

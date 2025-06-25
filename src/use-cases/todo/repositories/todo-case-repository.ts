@@ -14,22 +14,25 @@ export class TodoCaseRepository implements TodoRepository {
     return todo
   }
 
-  async create(todo: CreateTodoDto): Promise<void> {
+  async create(todo: CreateTodoDto, files : Express.Multer.File[]): Promise<void> {
      const todocreate = await this.prismaService.todo.create({data : {...todo}})
-    if(todo.files){
-      const image = await this.imageCaseRepository.uploadFile(todo.files)
-      if(!image) throw new Error("Error uploading file")
-      const payload_bucket = {
-        image_url: image.fullPath,
-        todo_id: todocreate.todo_id,
+    if(files.length > 0){
+      const files_array = await this.imageCaseRepository.uploadFiles(files, todocreate.user_id, todocreate.todo_id)
+      if(!files_array) throw new Error("Error uploading file")
+      for(const file of files_array) {
+        const payload_bucket = {
+          image_url: file.fullPath,
+          todo_id: todocreate.todo_id,
+        }
+        await this.imageCaseRepository.create(payload_bucket)
       }
-      await this.imageCaseRepository.create(payload_bucket)
+
     }
 
   }
 
   async update(id: string, todo: UpdateTodoDto): Promise<void> {
-     await this.prismaService.todo.update({where : {todo_id : id}, data : {...todo}})
+     await this.prismaService.todo.update({where : {todo_id : id}, data : {...todo, updatedAt : new Date()}})
   }
 
   async delete(id: string): Promise<void> {

@@ -36,7 +36,7 @@ class UserId {
   user_id: string;
 
   @Type(() => Date)
-  updateAt: Date;
+  updateAt: Date = new Date() ;
 }
 
 export class UpdateUserDto extends IntersectionType(

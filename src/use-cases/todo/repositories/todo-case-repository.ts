@@ -32,7 +32,7 @@ export class TodoCaseRepository implements TodoRepository {
   }
 
   async update(id: string, todo: UpdateTodoDto): Promise<void> {
-     await this.prismaService.todo.update({where : {todo_id : id}, data : {...todo, updatedAt : new Date()}})
+     await this.prismaService.todo.update({where : {todo_id : id}, data : {...todo}})
   }
 
   async delete(id: string): Promise<void> {

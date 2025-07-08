@@ -17,6 +17,9 @@ export class CreateTodoDto {
 class TodoId {
   @IsUUID()
   todo_id: string;
+
+  @Type(() => Date)
+  updatedAt : Date =  new Date();
 }
 
 export class UpdateTodoDto extends IntersectionType(
